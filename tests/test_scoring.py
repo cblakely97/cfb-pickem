@@ -88,6 +88,7 @@ def test_score_week(tmp_path: Path) -> None:
 
     assert_frame_equal(actual, expected)
 
+
 def test_score_week_with_no_correct_picks(tmp_path: Path) -> None:
     """A player with no correct picks receives zero points."""
 
@@ -132,4 +133,12 @@ def test_score_week_with_no_correct_picks(tmp_path: Path) -> None:
 
     actual = score_week(tmp_path)
 
-    assert actual.loc[0,"points"] == 0
+    expected = pd.DataFrame(
+        {
+            "player_id": ["coleman"],
+            "name": ["Coleman"],
+            "points": [0],
+        }
+    )
+
+    assert_frame_equal(actual,expected)

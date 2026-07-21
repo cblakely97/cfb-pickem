@@ -40,6 +40,9 @@ def score_week(data_dir: Path) -> pd.DataFrame:
             scored.groupby("player_id", as_index=False)["points"]
             .sum()
             .merge(players, on="player_id", how="left")
-            .sort_values("points", ascending=False)
+            .sort_values(
+                ["points", "name"],
+                ascending=[False,True],
+            )
             )
     return standings[["player_id", "name", "points"]].reset_index(drop=True)
