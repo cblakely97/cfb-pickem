@@ -1,8 +1,27 @@
+"""Functions for calculating weekly college football pick'em scores."""
+
 from pathlib import Path
 
 import pandas as pd
 
 def score_week(data_dir: Path) -> pd.DataFrame:
+    """Calculate weekly standings from pick'em CSV files.
+
+    The input directory must contain ``players.csv``, ``picks.csv``,
+    and ``results.csv``. Correct picks receive the assigned confidence
+    value, while incorrect picks receive zero points.
+
+    Parameters
+    ----------
+    data_dir
+        Directory containing the weekly input CSV files.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Standings sorted from highest to lowest score. The returned columns
+        are ``player_id``, ``name``, and ``points``.
+    """
     players = pd.read_csv(data_dir / "players.csv")
     picks = pd.read_csv(data_dir / "picks.csv")
     results = pd.read_csv(data_dir / "results.csv")
