@@ -23,4 +23,4 @@ def score_week(data_dir: Path) -> pd.DataFrame:
             .merge(players, on="player_id", how="left")
             .sort_values("points", ascending=False)
             )
-    return standings[["player_id", "name", "points"]]
+    return standings[["player_id", "name", "points"]].reset_index(drop=True)
