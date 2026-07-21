@@ -10,8 +10,8 @@ def check_duplicate_picks(picks: pd.DataFrame) -> list[str]:
     errors: list[str] = []
 
     duplicate_mask = picks.duplicated(
-        subset = ["player_id", "game_id"],
-        keep = False,
+        subset=["player_id", "game_id"],
+        keep=False,
     )
 
     duplicate_rows = (
@@ -72,6 +72,6 @@ def validate_week(data_dir: Path) -> list[str]:
     errors: list[str] = []
 
     errors.extend(check_duplicate_picks(picks))
-    errors.extend(check_unknown_players(players,picks))
+    errors.extend(check_unknown_players(picks, players))
 
     return errors

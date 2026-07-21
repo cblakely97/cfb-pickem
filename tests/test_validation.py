@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 
 from cfb_pickem.validation import (
+    validate_week,
     check_duplicate_picks,
     check_unknown_players,
 )
@@ -26,7 +27,7 @@ def test_check_duplicate_picks_detects_duplicate() -> None:
 
 
 def test_check_duplicate_picks_accepts_unique_picks() -> None:
-    picks=pd.DataFrame(
+    picks = pd.DataFrame(
         {
             "player_id": ["james", "james"],
             "game_id": ["game_1", "game_2"],
@@ -84,3 +85,51 @@ def test_check_unknown_players_accepts_players() -> None:
     errors = check_unknown_players(picks,players)
 
     assert errors == []
+
+def test_validate_week_combines_validation_checks(
+    tmp_path: Path,
+) -> None:
+    players = pd.DataFrame(
+        {
+            "player_id": ["coleman"],
+            "name": ["Coleman"],
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1"],
+            "away_team": ["A"],
+            "home_team": ["B"],
+        }
+    )
+
+    picks = pd.DataFrame(
+        {
+            "player_id": ["unknown", "unknown"],
+            "game_id": ["game_1", "game_1"],
+            "picked_team": ["A", "B"],
+            "confidence": [1, 1],
+        }
+    )
+
+    results = pd.DataFrame(
+        {
+            "game_id": ["game_1"],
+            "winner": ["A"],
+        }
+    )
+
+    players.to_csv(tmp_path / "players.csv", index=False)
+    games.to_csv(tmp_path / "games.csv", index=False)
+    picks.to_csv(tmp_path / "picks.csv", index=False)
+    results.to_csv(tmp_path / "results.csv", index=False)
+
+    errors = validate_week(tmp_path)
+
+    expected = [
+        "Player 'unknown' has multiple picks for game 'game_1'.",
+        "Player 'unknown' is not in players.csv",
+    ]
+
+    assert errors == expected
