@@ -1,4 +1,18 @@
+# Virtual environments
 .venv/
+venv/
+
+# Python-generated files
 __pycache__/
-.pytest_cache/
+*.py[cod]
 *.egg-info/
+
+# Test caches
+.pytest_cache/
+
+# Editors
+.vscode/
+.idea/
+
+# Operating systems
+.DS_Store
