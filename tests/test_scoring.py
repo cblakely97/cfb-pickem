@@ -142,3 +142,66 @@ def test_score_week_with_no_correct_picks(tmp_path: Path) -> None:
     )
 
     assert_frame_equal(actual,expected)
+
+
+def test_score_week_ties_sorted_alphabetically(tmp_path: Path) -> None:
+    """When ties exist the output is sorted alphabetically by name."""
+
+    players = pd.DataFrame(
+        {
+            "player_id": ["coleman", "alex"],
+            "name": ["Coleman", "Alex"],
+        }
+    )
+
+    picks = pd.DataFrame(
+        {
+            "player_id": [
+                "coleman",
+                "coleman",
+                "alex",
+                "alex",
+            ],
+            "game_id": [
+                "game_1",
+                "game_2",
+                "game_1",
+                "game_2",
+            ],
+            "picked_team": [
+                "B",
+                "C",
+                "A",
+                "D",
+            ],
+            "confidence": [
+                2,
+                1,
+                1,
+                2,
+            ],
+        }
+    )
+
+    results = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "winner": ["B", "D"],
+        }
+    )
+
+    players.to_csv(tmp_path / "players.csv", index=False)
+    picks.to_csv(tmp_path / "picks.csv", index=False)
+    results.to_csv(tmp_path / "results.csv", index=False)
+
+    actual = score_week(tmp_path)
+
+    expected = pd.DataFrame(
+        {
+            "player_id": ["alex", "coleman"],
+            "name": ["Alex", "Coleman"],
+            "points": [2, 2],
+        }
+    )
+
+    assert_frame_equal(actual,expected)
