@@ -1,0 +1,10 @@
+player_id,game_id,picked_team,confidence
+coleman,game01,Texas,3
+coleman,game02,Oregon,2
+coleman,game03,Clemson,1
+dad,game01,Ohio State,2
+dad,game02,Oregon,3
+dad,game03,LSU,1
+zach,game01,Ohio State,2
+zach,game02,Oregon,3
+zach,game03,Clemson,1
