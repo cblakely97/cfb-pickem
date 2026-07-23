@@ -4,12 +4,111 @@ import pandas as pd
 
 from cfb_pickem.validation import (
     validate_week,
-    check_duplicate_picks,
+    check_duplicate_player_game_pairs,
+    check_duplicate_confidence_values,
+    check_invalid_confidence_values,
     check_unknown_players,
 )
 
 
-def test_check_duplicate_picks_detects_duplicate() -> None:
+def test_check_invalid_confidence_values_accept_values() -> None:
+    picks = pd.DataFrame(
+        {
+            "player_id": ["coleman", "coleman"],
+            "game_id": ["game_1", "game_2"],
+            "picked_team": ["A", "B"],
+            "confidence": [1, 2]
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
+
+    errors = check_invalid_confidence_values(picks, games)
+
+    assert errors == []
+
+
+def test_check_invalid_confidence_values_detect_invalid() -> None:
+    picks = pd.DataFrame(
+        {
+            "player_id": ["coleman", "coleman"],
+            "game_id": ["game_1", "game_2"],
+            "picked_team": ["A", "B"],
+            "confidence": [1, 3]
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
+
+    errors = check_invalid_confidence_values(picks, games)
+
+    assert errors == [
+        "Player 'coleman' has invalid confidence value 3; "
+        "expected a value from 1 to 2."
+    ]
+
+
+def test_check_duplicate_confidence_values_detects_duplicates() -> None:
+    picks = pd.DataFrame(
+        {
+            "player_id": ["coleman", "coleman"],
+            "game_id": ["game_1", "game_2"],
+            "picked_team": ["A", "B"],
+            "confidence": [1, 1]
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
+
+    errors = check_duplicate_confidence_values(picks, games)
+
+    assert errors == [
+        "Player 'coleman' has reused confidence value 1."
+    ]
+
+
+def test_check_duplicate_confidence_values_accepts_unique_values() -> None:
+    picks = pd.DataFrame(
+        {
+            "player_id": ["coleman", "coleman"],
+            "game_id": ["game_1", "game_2"],
+            "picked_team": ["A", "B"],
+            "confidence": [1, 2]
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
+
+    errors = check_duplicate_confidence_values(picks,games)
+
+    assert errors == []
+
+
+def test_check_duplicate_player_game_pairs_detects_duplicate() -> None:
     picks = pd.DataFrame(
         {
             "player_id": ["coleman", "coleman"],
@@ -19,14 +118,14 @@ def test_check_duplicate_picks_detects_duplicate() -> None:
         }
     )
 
-    errors = check_duplicate_picks(picks)
+    errors = check_duplicate_player_game_pairs(picks)
 
     assert errors == [
         "Player 'coleman' has multiple picks for game 'game_1'."
     ]
 
 
-def test_check_duplicate_picks_accepts_unique_picks() -> None:
+def test_check_duplicate_player_game_pairs_accepts_unique_picks() -> None:
     picks = pd.DataFrame(
         {
             "player_id": ["james", "james"],
@@ -36,7 +135,7 @@ def test_check_duplicate_picks_accepts_unique_picks() -> None:
         }
     )
 
-    errors = check_duplicate_picks(picks)
+    errors = check_duplicate_player_game_pairs(picks)
 
     assert errors == []
 
@@ -98,25 +197,25 @@ def test_validate_week_combines_validation_checks(
 
     games = pd.DataFrame(
         {
-            "game_id": ["game_1"],
-            "away_team": ["A"],
-            "home_team": ["B"],
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
         }
     )
 
     picks = pd.DataFrame(
         {
-            "player_id": ["unknown", "unknown"],
-            "game_id": ["game_1", "game_1"],
-            "picked_team": ["A", "B"],
-            "confidence": [1, 1],
+            "player_id": ["unknown", "unknown", "coleman"],
+            "game_id": ["game_1", "game_1", "game_2"],
+            "picked_team": ["A", "B", "C"],
+            "confidence": [1, 1, 4],
         }
     )
 
     results = pd.DataFrame(
         {
-            "game_id": ["game_1"],
-            "winner": ["A"],
+            "game_id": ["game_1", "game_2"],
+            "winner": ["A", "C"],
         }
     )
 
@@ -130,6 +229,9 @@ def test_validate_week_combines_validation_checks(
     expected = [
         "Player 'unknown' has multiple picks for game 'game_1'.",
         "Player 'unknown' is not in players.csv",
+        "Player 'unknown' has reused confidence value 1.",
+        "Player 'coleman' has invalid confidence value 4; "
+        "expected a value from 1 to 2."
     ]
 
     assert errors == expected
