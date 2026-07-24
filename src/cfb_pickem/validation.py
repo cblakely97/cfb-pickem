@@ -5,6 +5,28 @@ from pathlib import Path
 import pandas as pd
 
 
+def check_unknown_games(
+    picks: pd.DataFrame,
+    games: pd.DataFrame,
+) -> list[str]:
+    """Return errors for game IDs appearing in picks but not games"""
+    errors: list[str] = []
+
+    unknown_mask = ~picks["game_id"].isin(games["game_id"])
+
+    unknown_games = (
+        picks.loc[unknown_mask, ["player_id", "game_id"]]
+        .drop_duplicates()
+    )
+
+    for row in unknown_games.itertuples(index=False):
+        errors.append(
+            f"Player {row.player_id!r} has picked for game  {row.game_id!r} "
+            "which is not in games.csv"
+        )
+
+    return errors
+
 def check_duplicate_player_game_pairs(picks: pd.DataFrame) -> list[str]:
     """Return errors for players with multiple picks for one game."""
     errors: list[str] = []
@@ -75,7 +97,7 @@ def check_duplicate_confidence_values(
     return errors
 
 
-def check_invalid_confidence_values(
+def check_confidence_values_in_range(
     picks: pd.DataFrame,
     games: pd.DataFrame,
 ) -> list[str]:
@@ -124,6 +146,6 @@ def validate_week(data_dir: Path) -> list[str]:
     errors.extend(check_duplicate_player_game_pairs(picks))
     errors.extend(check_unknown_players(picks, players))
     errors.extend(check_duplicate_confidence_values(picks))
-    errors.extend(check_invalid_confidence_values(picks, games))
+    errors.extend(check_confidence_values_in_range(picks, games))
 
     return errors

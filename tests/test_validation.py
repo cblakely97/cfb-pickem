@@ -6,12 +6,12 @@ from cfb_pickem.validation import (
     validate_week,
     check_duplicate_player_game_pairs,
     check_duplicate_confidence_values,
-    check_invalid_confidence_values,
+    check_confidence_values_in_range,
     check_unknown_players,
 )
 
 
-def test_check_invalid_confidence_values_accept_values() -> None:
+def test_check_confidence_values_in_range_accept_values() -> None:
     picks = pd.DataFrame(
         {
             "player_id": ["coleman", "coleman"],
@@ -29,12 +29,12 @@ def test_check_invalid_confidence_values_accept_values() -> None:
         }
     )
 
-    errors = check_invalid_confidence_values(picks, games)
+    errors = check_confidence_values_in_range(picks, games)
 
     assert errors == []
 
 
-def test_check_invalid_confidence_values_detect_invalid() -> None:
+def test_check_confidence_values_in_range_detect_invalid() -> None:
     picks = pd.DataFrame(
         {
             "player_id": ["coleman", "coleman"],
@@ -52,7 +52,7 @@ def test_check_invalid_confidence_values_detect_invalid() -> None:
         }
     )
 
-    errors = check_invalid_confidence_values(picks, games)
+    errors = check_confidence_values_in_range(picks, games)
 
     assert errors == [
         "Player 'coleman' has invalid confidence value 3; "
