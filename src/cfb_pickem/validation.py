@@ -75,7 +75,7 @@ def check_unknown_players(
 def check_duplicate_confidence_values(
     picks: pd.DataFrame,
 ) -> list[str]:
-    """Return errors for players with duplicated/invalid confidence values"""
+    """Return errors for players with duplicated confidence values"""
     errors: list[str] = []
 
     duplicate_mask = picks.duplicated(
@@ -101,7 +101,7 @@ def check_confidence_values_in_range(
     picks: pd.DataFrame,
     games: pd.DataFrame,
 ) -> list[str]:
-    """Return errors for players with duplicated/invalid confidence values"""
+    """Return errors for players with out of range confidence values"""
     errors: list[str] = []
 
     ngames = len(games)
