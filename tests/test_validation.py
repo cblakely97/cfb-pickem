@@ -78,7 +78,7 @@ def test_check_duplicate_confidence_values_detects_duplicates() -> None:
         }
     )
 
-    errors = check_duplicate_confidence_values(picks, games)
+    errors = check_duplicate_confidence_values(picks)
 
     assert errors == [
         "Player 'coleman' has reused confidence value 1."
@@ -103,7 +103,7 @@ def test_check_duplicate_confidence_values_accepts_unique_values() -> None:
         }
     )
 
-    errors = check_duplicate_confidence_values(picks,games)
+    errors = check_duplicate_confidence_values(picks)
 
     assert errors == []
 

@@ -52,7 +52,6 @@ def check_unknown_players(
 
 def check_duplicate_confidence_values(
     picks: pd.DataFrame,
-    games: pd.DataFrame,
 ) -> list[str]:
     """Return errors for players with duplicated/invalid confidence values"""
     errors: list[str] = []
@@ -124,7 +123,7 @@ def validate_week(data_dir: Path) -> list[str]:
 
     errors.extend(check_duplicate_player_game_pairs(picks))
     errors.extend(check_unknown_players(picks, players))
-    errors.extend(check_duplicate_confidence_values(picks, games))
+    errors.extend(check_duplicate_confidence_values(picks))
     errors.extend(check_invalid_confidence_values(picks, games))
 
     return errors
