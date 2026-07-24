@@ -21,11 +21,12 @@ def check_unknown_games(
 
     for row in unknown_games.itertuples(index=False):
         errors.append(
-            f"Player {row.player_id!r} has picked for game  {row.game_id!r} "
+            f"Player {row.player_id!r} has picked for game {row.game_id!r} "
             "which is not in games.csv"
         )
 
     return errors
+
 
 def check_duplicate_player_game_pairs(picks: pd.DataFrame) -> list[str]:
     """Return errors for players with multiple picks for one game."""

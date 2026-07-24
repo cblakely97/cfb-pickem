@@ -8,7 +8,57 @@ from cfb_pickem.validation import (
     check_duplicate_confidence_values,
     check_confidence_values_in_range,
     check_unknown_players,
+    check_unknown_games,
 )
+
+
+def test_check_unknown_games_accept_values() -> None:
+    picks = pd.DataFrame(
+        {
+            "player_id": ["coleman", "coleman"],
+            "game_id": ["game_1", "game_2"],
+            "picked_team": ["A", "B"],
+            "confidence": [1, 2]
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
+
+    errors = check_unknown_games(picks, games)
+
+    assert errors == []
+
+
+def test_check_unknown_games_detect_unknown() -> None:
+    picks = pd.DataFrame(
+        {
+            "player_id": ["coleman", "coleman"],
+            "game_id": ["game_1", "game_3"],
+            "picked_team": ["A", "B"],
+            "confidence": [1, 2]
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
+
+    errors = check_unknown_games(picks, games)
+
+    assert errors == [
+        "Player 'coleman' has picked for game 'game_3' "
+        "which is not in games.csv"
+]
 
 
 def test_check_confidence_values_in_range_accept_values() -> None:
