@@ -10,7 +10,85 @@ from cfb_pickem.validation import (
     check_unknown_players,
     check_unknown_games,
     check_invalid_picked_teams,
+    check_missing_player_game_pairs,
 )
+
+
+def test_check_missing_player_game_pairs_detects_missing_pick() -> None:
+    players = pd.DataFrame(
+        {
+            "player_id": ["coleman", "james"],
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+        }
+    )
+
+    picks = pd.DataFrame(
+        {
+            "player_id": [
+                "coleman",
+                "coleman",
+                "james",
+            ],
+            "game_id": [
+                "game_1",
+                "game_2",
+                "game_1",
+            ],
+        }
+    )
+
+    errors = check_missing_player_game_pairs(
+        picks,
+        players,
+        games,
+    )
+
+    assert errors == [
+        "Player 'james' is missing a pick for game 'game_2'."
+    ]
+
+def test_check_missing_player_game_pairs_accepts_complete_picks() -> None:
+    players = pd.DataFrame(
+        {
+            "player_id": ["coleman", "james"],
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+        }
+    )
+
+    picks = pd.DataFrame(
+        {
+            "player_id": [
+                "coleman",
+                "coleman",
+                "james",
+                "james",
+            ],
+            "game_id": [
+                "game_1",
+                "game_2",
+                "game_1",
+                "game_2",
+            ],
+        }
+    )
+
+    errors = check_missing_player_game_pairs(
+        picks,
+        players,
+        games,
+    )
+
+    assert errors == []
 
 
 def test_check_invalid_picked_teams_accept_values() -> None:

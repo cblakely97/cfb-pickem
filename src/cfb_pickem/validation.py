@@ -5,6 +5,42 @@ from pathlib import Path
 import pandas as pd
 
 
+def check_missing_player_game_pairs(
+    picks: pd.DataFrame,
+    players: pd.DataFrame,
+    games: pd.DataFrame,
+) -> list[str]:
+    """Return errors for players who are missing picks for games."""
+    errors: list[str] = []
+
+    expected_pairs = players[["player_id"]].merge(
+        games[["game_id"]],
+        how="cross",
+    )
+
+    submitted_pairs = picks[
+        ["player_id", "game_id"]
+    ].drop_duplicates()
+
+    missing_pairs = (
+        expected_pairs.merge(
+            submitted_pairs,
+            on=["player_id", "game_id"],
+            how="left",
+            indicator=True,
+        )
+        .loc[lambda df: df["_merge"] == "left_only"]
+    )
+
+    for row in missing_pairs.itertuples(index=False):
+        errors.append(
+            f"Player {row.player_id!r} is missing a pick "
+            f"for game {row.game_id!r}."
+        )
+
+    return errors
+
+
 def check_invalid_picked_teams(
     picks: pd.DataFrame,
     games: pd.DataFrame,
