@@ -9,7 +9,57 @@ from cfb_pickem.validation import (
     check_confidence_values_in_range,
     check_unknown_players,
     check_unknown_games,
+    check_invalid_picked_teams,
 )
+
+
+def test_check_invalid_picked_teams_accept_values() -> None:
+    picks = pd.DataFrame(
+        {
+            "player_id": ["coleman", "coleman"],
+            "game_id": ["game_1", "game_2"],
+            "picked_team": ["A", "C"],
+            "confidence": [1, 2]
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
+
+    errors = check_invalid_picked_teams(picks, games)
+
+    assert errors == []
+
+
+def test_check_invalid_picked_teams_detect_invalid() -> None:
+    picks = pd.DataFrame(
+        {
+            "player_id": ["coleman", "coleman"],
+            "game_id": ["game_1", "game_2"],
+            "picked_team": ["A", "A"],
+            "confidence": [1, 2]
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
+
+    errors = check_invalid_picked_teams(picks, games)
+
+    assert errors == [
+        "Player 'coleman' picked 'A' for game 'game_2'; "
+        "valid teams are 'C' and 'D'."
+    ]
 
 
 def test_check_unknown_games_accept_values() -> None:
@@ -58,7 +108,7 @@ def test_check_unknown_games_detect_unknown() -> None:
     assert errors == [
         "Player 'coleman' has picked for game 'game_3' "
         "which is not in games.csv"
-]
+    ]
 
 
 def test_check_confidence_values_in_range_accept_values() -> None:

@@ -5,6 +5,41 @@ from pathlib import Path
 import pandas as pd
 
 
+def check_invalid_picked_teams(
+    picks: pd.DataFrame,
+    games: pd.DataFrame,
+) -> list[str]:
+    """Return errors for picks with teams that are not in a game"""
+    errors: list[str] = []
+
+    merged = picks.merge(
+        games,
+        on="game_id",
+        how="left",
+        validate="many_to_one",
+    )
+
+    invalid_mask = (
+        (merged["picked_team"] != merged["home_team"])
+        &
+        (merged["picked_team"] != merged["away_team"])
+    )
+
+    invalid_rows = merged.loc[
+        invalid_mask,
+        ["player_id", "game_id", "picked_team", "home_team", "away_team"],
+    ]
+
+    for row in invalid_rows.itertuples(index=False):
+        errors.append(
+            f"Player {row.player_id!r} picked {row.picked_team!r} "
+            f"for game {row.game_id!r}; "
+            f"valid teams are {row.away_team!r} and {row.home_team!r}."
+        )
+
+    return errors
+
+
 def check_unknown_games(
     picks: pd.DataFrame,
     games: pd.DataFrame,
