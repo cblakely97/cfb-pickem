@@ -16,3 +16,7 @@ __pycache__/
 
 # Operating systems
 .DS_Store
+
+# Scratch files
+tmp.py
+scratch.py
