@@ -383,10 +383,10 @@ def test_validate_week_combines_validation_checks(
 
     picks = pd.DataFrame(
         {
-            "player_id": ["unknown", "unknown", "coleman"],
-            "game_id": ["game_1", "game_1", "game_2"],
-            "picked_team": ["A", "B", "C"],
-            "confidence": [1, 1, 4],
+            "player_id": ["unknown", "unknown", "coleman", "coleman"],
+            "game_id": ["game_1", "game_1", "game_2", "game_3"],
+            "picked_team": ["A", "B", "C", "F"],
+            "confidence": [1, 1, 4, 2],
         }
     )
 
@@ -409,7 +409,10 @@ def test_validate_week_combines_validation_checks(
         "Player 'unknown' is not in players.csv",
         "Player 'unknown' has reused confidence value 1.",
         "Player 'coleman' has invalid confidence value 4; "
-        "expected a value from 1 to 2."
+        "expected a value from 1 to 2.",
+        "Player 'coleman' has picked for game 'game_3' which is not "
+        "in games.csv",
+        "Player 'coleman' is missing a pick for game 'game_1'."
     ]
 
     assert errors == expected

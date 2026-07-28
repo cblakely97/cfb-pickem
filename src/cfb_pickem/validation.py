@@ -55,10 +55,18 @@ def check_invalid_picked_teams(
         validate="many_to_one",
     )
 
+    known_game_mask = (
+        merged["away_team"].notna()
+        &
+        merged["home_team"].notna()
+    )
+
     invalid_mask = (
         (merged["picked_team"] != merged["home_team"])
         &
         (merged["picked_team"] != merged["away_team"])
+        &
+        known_game_mask
     )
 
     invalid_rows = merged.loc[
@@ -219,5 +227,14 @@ def validate_week(data_dir: Path) -> list[str]:
     errors.extend(check_unknown_players(picks, players))
     errors.extend(check_duplicate_confidence_values(picks))
     errors.extend(check_confidence_values_in_range(picks, games))
+    errors.extend(check_unknown_games(picks, games))
+    errors.extend(check_invalid_picked_teams(picks, games))
+    errors.extend(
+        check_missing_player_game_pairs(
+            picks,
+            players,
+            games,
+        )
+    )
 
     return errors
