@@ -6,6 +6,7 @@ import pandas as pd
 
 from cfb_pickem.validation import validate_week
 
+
 def score_week(data_dir: Path) -> pd.DataFrame:
     """Calculate weekly standings from pick'em CSV files.
 

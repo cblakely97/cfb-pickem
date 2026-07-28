@@ -6,6 +6,7 @@ from pathlib import Path
 from cfb_pickem.scoring import score_week
 from cfb_pickem.validation import validate_week
 
+
 def build_parser() -> argparse.ArgumentParser:
     """Build and return the command-line argument parser."""
     parser = argparse.ArgumentParser(

@@ -3,14 +3,14 @@ from pathlib import Path
 import pandas as pd
 
 from cfb_pickem.validation import (
-    validate_week,
-    check_duplicate_player_game_pairs,
-    check_duplicate_confidence_values,
     check_confidence_values_in_range,
-    check_unknown_players,
-    check_unknown_games,
+    check_duplicate_confidence_values,
+    check_duplicate_player_game_pairs,
     check_invalid_picked_teams,
     check_missing_player_game_pairs,
+    check_unknown_games,
+    check_unknown_players,
+    validate_week,
 )
 
 
@@ -135,8 +135,10 @@ def test_check_invalid_picked_teams_detect_invalid() -> None:
     errors = check_invalid_picked_teams(picks, games)
 
     assert errors == [
-        "Player 'coleman' picked 'A' for game 'game_2'; "
-        "valid teams are 'C' and 'D'."
+        (
+            "Player 'coleman' picked 'A' for game 'game_2'; "
+            "valid teams are 'C' and 'D'."
+        )
     ]
 
 
@@ -184,8 +186,10 @@ def test_check_unknown_games_detect_unknown() -> None:
     errors = check_unknown_games(picks, games)
 
     assert errors == [
-        "Player 'coleman' has picked for unknown game 'game_3' "
-        "which is not in games.csv."
+        (
+            "Player 'coleman' has picked for unknown game 'game_3' "
+            "which is not in games.csv."
+        )
     ]
 
 
@@ -233,8 +237,10 @@ def test_check_confidence_values_in_range_detect_invalid() -> None:
     errors = check_confidence_values_in_range(picks, games)
 
     assert errors == [
-        "Player 'coleman' has invalid confidence value 3; "
+        (
+            "Player 'coleman' has invalid confidence value 3; "
         "expected a value from 1 to 2."
+        )
     ]
 
 
@@ -245,14 +251,6 @@ def test_check_duplicate_confidence_values_detects_duplicates() -> None:
             "game_id": ["game_1", "game_2"],
             "picked_team": ["A", "B"],
             "confidence": [1, 1]
-        }
-    )
-
-    games = pd.DataFrame(
-        {
-            "game_id": ["game_1", "game_2"],
-            "away_team": ["A", "C"],
-            "home_team": ["B", "D"],
         }
     )
 
@@ -270,14 +268,6 @@ def test_check_duplicate_confidence_values_accepts_unique_values() -> None:
             "game_id": ["game_1", "game_2"],
             "picked_team": ["A", "B"],
             "confidence": [1, 2]
-        }
-    )
-
-    games = pd.DataFrame(
-        {
-            "game_id": ["game_1", "game_2"],
-            "away_team": ["A", "C"],
-            "home_team": ["B", "D"],
         }
     )
 
@@ -408,10 +398,14 @@ def test_validate_week_combines_validation_checks(
         "Player 'unknown' has multiple picks for game 'game_1'.",
         "Player 'unknown' is not in players.csv",
         "Player 'unknown' has reused confidence value 1.",
-        "Player 'coleman' has invalid confidence value 4; "
-        "expected a value from 1 to 2.",
-        "Player 'coleman' has picked for unknown game 'game_3' which is not "
-        "in games.csv.",
+        (
+            "Player 'coleman' has invalid confidence value 4; "
+            "expected a value from 1 to 2."
+        ),
+        (
+            "Player 'coleman' has picked for unknown game 'game_3' which is not "
+            "in games.csv."
+        ),
         "Player 'coleman' is missing a pick for game 'game_1'."
     ]
 

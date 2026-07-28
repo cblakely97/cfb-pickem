@@ -219,7 +219,6 @@ def validate_week(data_dir: Path) -> list[str]:
     players = pd.read_csv(data_dir / "players.csv")
     games = pd.read_csv(data_dir / "games.csv")
     picks = pd.read_csv(data_dir / "picks.csv")
-    results = pd.read_csv(data_dir / "results.csv")
 
     errors: list[str] = []
 
