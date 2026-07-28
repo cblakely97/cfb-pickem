@@ -416,3 +416,68 @@ def test_validate_week_combines_validation_checks(
     ]
 
     assert errors == expected
+
+
+def test_validate_week_accepts_valid_week(tmp_path : Path,) -> None:
+    players = pd.DataFrame(
+        {
+            "player_id": ["coleman", "james"],
+            "name": ["Coleman", "James"],
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
+
+    picks = pd.DataFrame(
+        {
+            "player_id": [
+                "coleman",
+                "coleman",
+                "james",
+                "james",
+            ],
+            "game_id": [
+                "game_1",
+                "game_2",
+                "game_1",
+                "game_2",
+            ],
+            "picked_team": [
+                "A",
+                "D",
+                "B",
+                "C",
+            ],
+            "confidence": [
+                2,
+                1,
+                1,
+                2,
+            ]
+        }
+    )
+
+    results = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "winner": ["A", "D"],
+        }
+    )
+
+    players.to_csv(tmp_path / "players.csv", index=False)
+    games.to_csv(tmp_path / "games.csv", index=False)
+    picks.to_csv(tmp_path / "picks.csv", index=False)
+    results.to_csv(tmp_path / "results.csv", index=False)
+
+    assert validate_week(tmp_path) == []
+
+
+
+
+
