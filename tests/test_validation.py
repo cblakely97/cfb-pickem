@@ -184,8 +184,8 @@ def test_check_unknown_games_detect_unknown() -> None:
     errors = check_unknown_games(picks, games)
 
     assert errors == [
-        "Player 'coleman' has picked for game 'game_3' "
-        "which is not in games.csv"
+        "Player 'coleman' has picked for unknown game 'game_3' "
+        "which is not in games.csv."
     ]
 
 
@@ -410,8 +410,8 @@ def test_validate_week_combines_validation_checks(
         "Player 'unknown' has reused confidence value 1.",
         "Player 'coleman' has invalid confidence value 4; "
         "expected a value from 1 to 2.",
-        "Player 'coleman' has picked for game 'game_3' which is not "
-        "in games.csv",
+        "Player 'coleman' has picked for unknown game 'game_3' which is not "
+        "in games.csv.",
         "Player 'coleman' is missing a pick for game 'game_1'."
     ]
 

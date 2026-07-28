@@ -100,8 +100,8 @@ def check_unknown_games(
 
     for row in unknown_games.itertuples(index=False):
         errors.append(
-            f"Player {row.player_id!r} has picked for game {row.game_id!r} "
-            "which is not in games.csv"
+            f"Player {row.player_id!r} has picked for unknown game "
+            f"{row.game_id!r} which is not in games.csv."
         )
 
     return errors
