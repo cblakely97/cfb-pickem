@@ -16,6 +16,14 @@ def test_score_week(tmp_path: Path) -> None:
         }
     )
 
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2", "game_3"],
+            "away_team": ["A", "C", "E"],
+            "home_team": ["B", "D", "F"],
+        }
+    )
+
     picks = pd.DataFrame(
         {
             "player_id": [
@@ -73,6 +81,7 @@ def test_score_week(tmp_path: Path) -> None:
     )
 
     players.to_csv(tmp_path / "players.csv", index=False)
+    games.to_csv(tmp_path / "games.csv", index=False)
     picks.to_csv(tmp_path / "picks.csv", index=False)
     results.to_csv(tmp_path / "results.csv", index=False)
 
@@ -96,6 +105,14 @@ def test_score_week_with_no_correct_picks(tmp_path: Path) -> None:
         {
             "player_id": ["coleman"],
             "name": ["Coleman"],
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
         }
     )
 
@@ -128,6 +145,7 @@ def test_score_week_with_no_correct_picks(tmp_path: Path) -> None:
     )
 
     players.to_csv(tmp_path / "players.csv", index=False)
+    games.to_csv(tmp_path / "games.csv", index=False)
     picks.to_csv(tmp_path / "picks.csv", index=False)
     results.to_csv(tmp_path / "results.csv", index=False)
 
@@ -151,6 +169,14 @@ def test_score_week_ties_sorted_alphabetically(tmp_path: Path) -> None:
         {
             "player_id": ["coleman", "alex"],
             "name": ["Coleman", "Alex"],
+        }
+    )
+
+    games = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
         }
     )
 
@@ -191,6 +217,7 @@ def test_score_week_ties_sorted_alphabetically(tmp_path: Path) -> None:
     )
 
     players.to_csv(tmp_path / "players.csv", index=False)
+    games.to_csv(tmp_path / "games.csv", index=False)
     picks.to_csv(tmp_path / "picks.csv", index=False)
     results.to_csv(tmp_path / "results.csv", index=False)
 

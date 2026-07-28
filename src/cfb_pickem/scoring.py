@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from cfb_pickem.validation import validate_week
+
 def score_week(data_dir: Path) -> pd.DataFrame:
     """Calculate weekly standings from pick'em CSV files.
 
@@ -22,6 +24,18 @@ def score_week(data_dir: Path) -> pd.DataFrame:
         Standings sorted from highest to lowest score. The returned columns
         are ``player_id``, ``name``, and ``points``.
     """
+    # Check week for errors
+    errors = validate_week(data_dir)
+
+    if errors:
+        formatted_errors = "\n".join(
+            f"- {error}" for error in errors
+        )
+        raise ValueError(
+            "Cannot score invalid weekly data:\n"
+            f"{formatted_errors}"
+            )
+
     players = pd.read_csv(data_dir / "players.csv")
     picks = pd.read_csv(data_dir / "picks.csv")
     results = pd.read_csv(data_dir / "results.csv")
