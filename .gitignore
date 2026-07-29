@@ -20,3 +20,4 @@ __pycache__/
 # Scratch files
 tmp.py
 scratch.py
+raw*.csv
