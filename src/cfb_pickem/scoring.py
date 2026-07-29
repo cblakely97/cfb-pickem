@@ -37,7 +37,9 @@ def score_week(data_dir: Path) -> pd.DataFrame:
             f"{formatted_errors}"
             )
 
-    players = pd.read_csv(data_dir / "players.csv")
+    season_dir = data_dir.parent
+
+    players = pd.read_csv(season_dir / "players.csv")
     picks = pd.read_csv(data_dir / "picks.csv")
     results = pd.read_csv(data_dir / "results.csv")
 

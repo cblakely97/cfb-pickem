@@ -356,6 +356,9 @@ def test_check_unknown_players_accepts_players() -> None:
 def test_validate_week_combines_validation_checks(
     tmp_path: Path,
 ) -> None:
+    week_dir = tmp_path / "week_01"
+    week_dir.mkdir()
+
     players = pd.DataFrame(
         {
             "player_id": ["coleman"],
@@ -388,11 +391,11 @@ def test_validate_week_combines_validation_checks(
     )
 
     players.to_csv(tmp_path / "players.csv", index=False)
-    games.to_csv(tmp_path / "games.csv", index=False)
-    picks.to_csv(tmp_path / "picks.csv", index=False)
-    results.to_csv(tmp_path / "results.csv", index=False)
+    games.to_csv(week_dir / "games.csv", index=False)
+    picks.to_csv(week_dir / "picks.csv", index=False)
+    results.to_csv(week_dir / "results.csv", index=False)
 
-    errors = validate_week(tmp_path)
+    errors = validate_week(week_dir)
 
     expected = [
         "Player 'unknown' has multiple picks for game 'game_1'.",
@@ -413,6 +416,9 @@ def test_validate_week_combines_validation_checks(
 
 
 def test_validate_week_accepts_valid_week(tmp_path : Path,) -> None:
+    week_dir = tmp_path / "week_01"
+    week_dir.mkdir()
+
     players = pd.DataFrame(
         {
             "player_id": ["coleman", "james"],
@@ -465,11 +471,11 @@ def test_validate_week_accepts_valid_week(tmp_path : Path,) -> None:
     )
 
     players.to_csv(tmp_path / "players.csv", index=False)
-    games.to_csv(tmp_path / "games.csv", index=False)
-    picks.to_csv(tmp_path / "picks.csv", index=False)
-    results.to_csv(tmp_path / "results.csv", index=False)
+    games.to_csv(week_dir / "games.csv", index=False)
+    picks.to_csv(week_dir / "picks.csv", index=False)
+    results.to_csv(week_dir / "results.csv", index=False)
 
-    assert validate_week(tmp_path) == []
+    assert validate_week(week_dir) == []
 
 
 

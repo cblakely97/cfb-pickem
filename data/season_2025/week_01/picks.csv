@@ -1,0 +1,10 @@
+player_id,game_id,picked_team,confidence
+coleman,texas_at_ohio_state,Texas,3
+coleman,marshall_at_georgia,Marshall,2
+coleman,notre_dame_at_miami,Notre Dame,1
+dad,texas_at_ohio_state,Ohio State,2
+dad,marshall_at_georgia,Georgia,3
+dad,notre_dame_at_miami,Miami,1
+zach,texas_at_ohio_state,Ohio State,2
+zach,marshall_at_georgia,Georgia,3
+zach,notre_dame_at_miami,Notre Dame,1

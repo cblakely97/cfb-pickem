@@ -216,7 +216,8 @@ def validate_week(data_dir: Path) -> list[str]:
         Human-readable validation errors. An empty list means that all input
         data passed all implemented checks.
     """
-    players = pd.read_csv(data_dir / "players.csv")
+    season_dir = data_dir.parent
+    players = pd.read_csv(season_dir / "players.csv")
     games = pd.read_csv(data_dir / "games.csv")
     picks = pd.read_csv(data_dir / "picks.csv")
 

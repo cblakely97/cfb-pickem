@@ -9,6 +9,9 @@ from cfb_pickem.scoring import score_week
 def test_score_week(tmp_path: Path) -> None:
     """Correct picks receive their assigned confidence points."""
 
+    week_dir = tmp_path / "week_01"
+    week_dir.mkdir()
+
     players = pd.DataFrame(
         {
             "player_id": ["coleman", "dad", "zach"],
@@ -81,11 +84,11 @@ def test_score_week(tmp_path: Path) -> None:
     )
 
     players.to_csv(tmp_path / "players.csv", index=False)
-    games.to_csv(tmp_path / "games.csv", index=False)
-    picks.to_csv(tmp_path / "picks.csv", index=False)
-    results.to_csv(tmp_path / "results.csv", index=False)
+    games.to_csv(week_dir / "games.csv", index=False)
+    picks.to_csv(week_dir / "picks.csv", index=False)
+    results.to_csv(week_dir / "results.csv", index=False)
 
-    actual = score_week(tmp_path)
+    actual = score_week(week_dir)
 
     expected = pd.DataFrame(
         {
@@ -100,6 +103,8 @@ def test_score_week(tmp_path: Path) -> None:
 
 def test_score_week_with_no_correct_picks(tmp_path: Path) -> None:
     """A player with no correct picks receives zero points."""
+    week_dir = tmp_path / "week_01"
+    week_dir.mkdir()
 
     players = pd.DataFrame(
         {
@@ -145,11 +150,11 @@ def test_score_week_with_no_correct_picks(tmp_path: Path) -> None:
     )
 
     players.to_csv(tmp_path / "players.csv", index=False)
-    games.to_csv(tmp_path / "games.csv", index=False)
-    picks.to_csv(tmp_path / "picks.csv", index=False)
-    results.to_csv(tmp_path / "results.csv", index=False)
+    games.to_csv(week_dir / "games.csv", index=False)
+    picks.to_csv(week_dir / "picks.csv", index=False)
+    results.to_csv(week_dir / "results.csv", index=False)
 
-    actual = score_week(tmp_path)
+    actual = score_week(week_dir)
 
     expected = pd.DataFrame(
         {
@@ -164,6 +169,8 @@ def test_score_week_with_no_correct_picks(tmp_path: Path) -> None:
 
 def test_score_week_ties_sorted_alphabetically(tmp_path: Path) -> None:
     """When ties exist the output is sorted alphabetically by name."""
+    week_dir = tmp_path / "week_01"
+    week_dir.mkdir()
 
     players = pd.DataFrame(
         {
@@ -217,11 +224,11 @@ def test_score_week_ties_sorted_alphabetically(tmp_path: Path) -> None:
     )
 
     players.to_csv(tmp_path / "players.csv", index=False)
-    games.to_csv(tmp_path / "games.csv", index=False)
-    picks.to_csv(tmp_path / "picks.csv", index=False)
-    results.to_csv(tmp_path / "results.csv", index=False)
+    games.to_csv(week_dir / "games.csv", index=False)
+    picks.to_csv(week_dir / "picks.csv", index=False)
+    results.to_csv(week_dir / "results.csv", index=False)
 
-    actual = score_week(tmp_path)
+    actual = score_week(week_dir)
 
     expected = pd.DataFrame(
         {

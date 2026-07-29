@@ -9,6 +9,9 @@ def test_run_validation_reports_valid_week(
     tmp_path: Path,
     capsys,
 ) -> None:
+    week_dir = tmp_path / "week_01"
+    week_dir.mkdir()
+
     players = pd.DataFrame(
         {
             "player_id": ["coleman"],
@@ -38,11 +41,11 @@ def test_run_validation_reports_valid_week(
     )
 
     players.to_csv(tmp_path / "players.csv", index=False)
-    games.to_csv(tmp_path / "games.csv", index=False)
-    picks.to_csv(tmp_path / "picks.csv", index=False)
-    results.to_csv(tmp_path / "results.csv", index=False)
+    games.to_csv(week_dir / "games.csv", index=False)
+    picks.to_csv(week_dir / "picks.csv", index=False)
+    results.to_csv(week_dir / "results.csv", index=False)
 
-    exit_code = run_validation(tmp_path)
+    exit_code = run_validation(week_dir)
     captured = capsys.readouterr()
 
     assert exit_code == 0
@@ -52,6 +55,9 @@ def test_run_validation_reports_errors(
     tmp_path: Path,
     capsys,
 ) -> None:
+    week_dir = tmp_path / "week_01"
+    week_dir.mkdir()
+
     players = pd.DataFrame(
         {
             "player_id": ["coleman"],
@@ -81,11 +87,11 @@ def test_run_validation_reports_errors(
     )
 
     players.to_csv(tmp_path / "players.csv", index=False)
-    games.to_csv(tmp_path / "games.csv", index=False)
-    picks.to_csv(tmp_path / "picks.csv", index=False)
-    results.to_csv(tmp_path / "results.csv", index=False)
+    games.to_csv(week_dir / "games.csv", index=False)
+    picks.to_csv(week_dir / "picks.csv", index=False)
+    results.to_csv(week_dir / "results.csv", index=False)
 
-    exit_code = run_validation(tmp_path)
+    exit_code = run_validation(week_dir)
     captured = capsys.readouterr()
 
     assert exit_code == 1
