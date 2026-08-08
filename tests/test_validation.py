@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from cfb_pickem.validation import (
@@ -374,12 +375,34 @@ def test_validate_week_combines_validation_checks(
         }
     )
 
+    schedule = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2", "game_9", "game_7", "game_8"],
+            "away_team": ["A", "C", "E", "G", "W"],
+            "home_team": ["B", "D", "F", "H", "X"],
+        }
+    )
+
     picks = pd.DataFrame(
         {
-            "player_id": ["unknown", "unknown", "coleman", "coleman"],
-            "game_id": ["game_1", "game_1", "game_2", "game_3"],
-            "picked_team": ["A", "B", "C", "F"],
-            "confidence": [1, 1, 4, 2],
+            "player_id": ["unknown", 
+                          "unknown", 
+                          "unknown",
+                          "coleman", 
+                          "coleman",
+                          "coleman",
+                          ],
+            "game_id": ["game_1",
+                        "game_1",
+                        "game_7",
+                        "game_2",
+                        "game_3",
+                        "game_8",
+                        ],
+            "picked_team": ["A", "B", "G", "C", "F", "W"],
+            "confidence": [1, 1, np.nan, 4, 2, np.nan,],
+            "pick_type": ["regular", "regular", "bonus", 
+                          "regular", "regular", "bonus"]
         }
     )
 
@@ -392,6 +415,7 @@ def test_validate_week_combines_validation_checks(
 
     players.to_csv(tmp_path / "players.csv", index=False)
     games.to_csv(week_dir / "games.csv", index=False)
+    schedule.to_csv(week_dir / "schedule.csv", index=False)
     picks.to_csv(week_dir / "picks.csv", index=False)
     results.to_csv(week_dir / "results.csv", index=False)
 
@@ -434,32 +458,56 @@ def test_validate_week_accepts_valid_week(tmp_path : Path,) -> None:
         }
     )
 
+    schedule = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2", "game_3"],
+            "away_team": ["A", "C", "E"],
+            "home_team": ["B", "D", "F"],
+        }
+    )
+
     picks = pd.DataFrame(
         {
             "player_id": [
                 "coleman",
                 "coleman",
+                "coleman",
+                "james",
                 "james",
                 "james",
             ],
             "game_id": [
                 "game_1",
                 "game_2",
+                "game_3",
                 "game_1",
                 "game_2",
+                "game_3",
             ],
             "picked_team": [
                 "A",
                 "D",
+                "F",
                 "B",
                 "C",
+                "E",
             ],
             "confidence": [
                 2,
                 1,
+                np.nan,
                 1,
                 2,
-            ]
+                np.nan,
+            ],
+            "pick_type": [
+                "regular",
+                "regular",
+                "bonus",
+                "regular",
+                "regular",
+                "bonus",
+            ],
         }
     )
 
@@ -472,6 +520,7 @@ def test_validate_week_accepts_valid_week(tmp_path : Path,) -> None:
 
     players.to_csv(tmp_path / "players.csv", index=False)
     games.to_csv(week_dir / "games.csv", index=False)
+    schedule.to_csv(week_dir / "schedule.csv", index=False)
     picks.to_csv(week_dir / "picks.csv", index=False)
     results.to_csv(week_dir / "results.csv", index=False)
 

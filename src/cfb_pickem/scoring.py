@@ -7,7 +7,10 @@ import pandas as pd
 from cfb_pickem.validation import validate_week
 
 
-def score_week(data_dir: Path) -> pd.DataFrame:
+def score_week(
+    data_dir: Path,
+    bonus_points : int = 5,
+) -> pd.DataFrame:
     """Calculate weekly standings from pick'em CSV files.
 
     The input directory must contain ``players.csv``, ``picks.csv``,
@@ -50,8 +53,27 @@ def score_week(data_dir: Path) -> pd.DataFrame:
             validate="many_to_one",
             )
 
+    regular_mask = scored["pick_type"] == "regular"
+    bonus_mask = scored["pick_type"] == "bonus"
+
     scored["correct"] = scored["picked_team"] == scored["winner"]
-    scored["points"] = scored["confidence"].where(scored["correct"], 0)
+
+    scored["points"] = 0
+
+    scored.loc[
+        regular_mask & scored["correct"],
+        "points",
+    ] = scored.loc[
+        regular_mask & scored["correct"],
+        "confidence",
+    ]
+
+    scored.loc[
+        bonus_mask & scored["correct"],
+        "points",
+    ] = bonus_points
+
+    scored["points"] = scored["points"].astype(int)
 
     standings = (
             scored.groupby("player_id", as_index=False)["points"]

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from cfb_pickem.cli import run_validation
@@ -25,12 +26,20 @@ def test_run_validation_reports_valid_week(
             "home_team": ["B"],
         }
     )
+    schedule = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
     picks = pd.DataFrame(
         {
-            "player_id": ["coleman"],
-            "game_id": ["game_1"],
-            "picked_team": ["A"],
-            "confidence": [1],
+            "player_id": ["coleman", "coleman"],
+            "game_id": ["game_1", "game_2"],
+            "picked_team": ["A", "D"],
+            "confidence": [1, np.nan],
+            "pick_type": ["regular", "bonus"],
         }
     )
     results = pd.DataFrame(
@@ -42,6 +51,7 @@ def test_run_validation_reports_valid_week(
 
     players.to_csv(tmp_path / "players.csv", index=False)
     games.to_csv(week_dir / "games.csv", index=False)
+    schedule.to_csv(week_dir / "schedule.csv", index=False)
     picks.to_csv(week_dir / "picks.csv", index=False)
     results.to_csv(week_dir / "results.csv", index=False)
 
@@ -71,12 +81,20 @@ def test_run_validation_reports_errors(
             "home_team": ["B"],
         }
     )
+    schedule = pd.DataFrame(
+        {
+            "game_id": ["game_1", "game_2"],
+            "away_team": ["A", "C"],
+            "home_team": ["B", "D"],
+        }
+    )
     picks = pd.DataFrame(
         {
-            "player_id": ["unknown"],
-            "game_id": ["game_1"],
-            "picked_team": ["A"],
-            "confidence": [1],
+            "player_id": ["unknown", "coleman"],
+            "game_id": ["game_1", "game_2"],
+            "picked_team": ["A", "C"],
+            "confidence": [1, np.nan],
+            "pick_type": ["regular", "bonus"],
         }
     )
     results = pd.DataFrame(
@@ -88,6 +106,7 @@ def test_run_validation_reports_errors(
 
     players.to_csv(tmp_path / "players.csv", index=False)
     games.to_csv(week_dir / "games.csv", index=False)
+    schedule.to_csv(week_dir / "schedule.csv", index=False)
     picks.to_csv(week_dir / "picks.csv", index=False)
     results.to_csv(week_dir / "results.csv", index=False)
 

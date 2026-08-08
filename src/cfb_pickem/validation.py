@@ -171,7 +171,7 @@ def check_duplicate_confidence_values(
     for row in duplicate_rows.itertuples(index=False):
         errors.append(
             f"Player {row.player_id!r} has reused confidence value "
-            f"{row.confidence!r}."
+            f"{int(row.confidence)!r}."
         )
 
     return errors
@@ -196,7 +196,54 @@ def check_confidence_values_in_range(
     for row in invalid_rows.itertuples(index=False):
         errors.append(
             f"Player {row.player_id!r} has invalid confidence value "
-            f"{row.confidence!r}; expected a value from 1 to {ngames}."
+            f"{int(row.confidence)!r}; expected a value from 1 to {ngames}."
+        )
+
+    return errors
+
+
+def check_bonus_pick_counts(
+    bonus_picks: pd.DataFrame,
+    players : pd.DataFrame,
+) -> list[str]:
+    """Return errors for players missing bonus picks"""
+    errors: list[str] = []
+
+    counts = (
+        bonus_picks.groupby("player_id")
+        .size()
+        .reindex(players["player_id"], fill_value=0)
+    )
+
+    for player_id, count in counts.items():
+        if count == 0:
+            errors.append(
+                f"Player {player_id!r} is missing a bonus pick."
+            )
+        elif count > 1:
+            errors.append(
+                f"Player {player_id!r} has submitted {count} bonus picks; "
+                "expected exactly one."
+            )
+
+    return errors
+
+
+def check_pick_types(picks: pd.DataFrame) -> list[str]:
+    """Returns errors for picks that are not either 'bonus' or 'regular'"""
+    errors: list[str] = []
+
+    invalid_mask = ~picks["pick_type"].isin(["regular", "bonus"])
+
+    invalid_rows = (
+        picks.loc[invalid_mask, ["player_id", "pick_type"]]
+        .drop_duplicates()
+    )
+
+    for row in invalid_rows.itertuples(index=False):
+        errors.append(
+            f"Player {row.player_id!r} has invalid pick type {row.pick_type!r}; "
+            f"expected 'regular' or 'bonus'."
         )
 
     return errors
@@ -219,16 +266,21 @@ def validate_week(data_dir: Path) -> list[str]:
     season_dir = data_dir.parent
     players = pd.read_csv(season_dir / "players.csv")
     games = pd.read_csv(data_dir / "games.csv")
+    schedule = pd.read_csv(data_dir / "schedule.csv")
     picks = pd.read_csv(data_dir / "picks.csv")
+
+    regular_picks = picks.loc[picks["pick_type"] == "regular"]
+    bonus_picks = picks.loc[picks["pick_type"] == "bonus"]
 
     errors: list[str] = []
 
     errors.extend(check_duplicate_player_game_pairs(picks))
     errors.extend(check_unknown_players(picks, players))
-    errors.extend(check_duplicate_confidence_values(picks))
-    errors.extend(check_confidence_values_in_range(picks, games))
-    errors.extend(check_unknown_games(picks, games))
-    errors.extend(check_invalid_picked_teams(picks, games))
+    errors.extend(check_duplicate_confidence_values(regular_picks))
+    errors.extend(check_confidence_values_in_range(regular_picks, games))
+    errors.extend(check_unknown_games(regular_picks, games))
+    errors.extend(check_unknown_games(bonus_picks, schedule))
+    errors.extend(check_invalid_picked_teams(picks, schedule))
     errors.extend(
         check_missing_player_game_pairs(
             picks,
@@ -236,5 +288,7 @@ def validate_week(data_dir: Path) -> list[str]:
             games,
         )
     )
+    errors.extend(check_bonus_pick_counts(bonus_picks, players))
+    errors.extend(check_pick_types(picks))
 
     return errors
