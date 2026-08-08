@@ -1,10 +1,13 @@
-player_id,game_id,picked_team,confidence
-coleman,texas_at_ohio_state,Texas,3
-coleman,marshall_at_georgia,Marshall,2
-coleman,notre_dame_at_miami,Notre Dame,1
-dad,texas_at_ohio_state,Ohio State,2
-dad,marshall_at_georgia,Georgia,3
-dad,notre_dame_at_miami,Miami,1
-zach,texas_at_ohio_state,Ohio State,2
-zach,marshall_at_georgia,Georgia,3
-zach,notre_dame_at_miami,Notre Dame,1
+player_id,game_id,picked_team,confidence,pick_type
+coleman,texas_at_ohio_state,Texas,3,regular
+coleman,marshall_at_georgia,Marshall,2,regular
+coleman,notre_dame_at_miami,Notre Dame,1,regular
+coleman,hawaii_at_arizona,Hawaii,,bonus
+dad,texas_at_ohio_state,Ohio State,2,regular
+dad,marshall_at_georgia,Georgia,3,regular
+dad,notre_dame_at_miami,Miami,1,regular
+dad,albany_at_iowa,Iowa,,bonus
+zach,texas_at_ohio_state,Ohio State,2,regular
+zach,marshall_at_georgia,Georgia,3,regular
+zach,notre_dame_at_miami,Notre Dame,1,regular
+zach,utah_at_ucla,Utah,,bonus
